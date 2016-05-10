@@ -40,7 +40,7 @@ function arccReducer(old, action) {
 
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
-		React.createElement(HelloMessage, props),
+		React.createElement(HelloMessage, props.state),
 		React.createElement('h1', {}, 'Big Cookie'),
 		React.createElement('div', {}, props.state.cookies + ' Cookies'),
 		React.createElement(BigCookieButton, props),
