@@ -2,7 +2,6 @@
 var express = require('express');
 var path = require('path');
 var nunjucks = require('nunjucks');
-var config = require('./config');
 
 
 // Settings
