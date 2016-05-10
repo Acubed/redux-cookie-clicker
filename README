@@ -17,3 +17,9 @@ In a desert.
 Why?
 
 Because cookies, functional programming, and ECMAScript.
+
+How?
+
+Install dependencies
+Run $ node httpd.js
+open http://localhost:8080/
