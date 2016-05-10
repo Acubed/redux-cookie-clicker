@@ -16,10 +16,33 @@ var buildingTypes = [
 	{label:'Prism', name:'prism', baseCost:2100e12, baseClicks:2900e6},
 ];
 
+
+function arccReducer(old, action) {
+	if (typeof old != 'object') {
+		throw new Error('Missing application state');
+	}
+	var state = {};
+	for(var n in old) state[n]=old[n];
+	switch (action.type) {
+		case 'bigCookieClick':
+			state.cookies = old.cookies+1;
+			return state;
+		case 'buildingPurchase':
+			state.cookies = old.cookies-1;
+			if(state.cookies<0) throw new Error('Cannot have fewer than 0 cookies!');
+			return state;
+		default:
+			return state;
+	}
+}
+
+
+
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, props),
 		React.createElement('h1', {}, 'Big Cookie'),
+		React.createElement('div', {}, props.state.cookies + ' Cookies'),
 		React.createElement(BigCookieButton, props),
 		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
@@ -53,11 +76,20 @@ function onLoad(){
 		arccStateVersion: 1,
 		startDate: new Date().getTime(),
 		playMode: 'full',
-		name: 'Royal Machine',
+		name: 'Snazzy Kitten',
 		cookies: 0,
 		handmadeCookies: 0,
 	};
-	ReactDOM.render(React.createElement(CookieClickerMain, {state:initialState}), document.getElementById('main'));
+	var store = Redux.createStore(arccReducer, initialState);
+	store.subscribe(render);
+	render();
+	function render(){
+		var props = {
+			state: store.getState(),
+			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick'}); },
+		};
+		ReactDOM.render(React.createElement(CookieClickerMain, props), document.getElementById('main'));
+	}
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
