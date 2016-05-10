@@ -17,19 +17,16 @@ var buildingTypes = [
 ];
 
 
-function arccReducer(old, action) {
-	if (typeof old != 'object') {
+function arccReducer(state, action) {
+	if (typeof state != 'object') {
 		throw new Error('Missing application state');
 	}
-	var state = {};
-	for(var n in old) state[n]=old[n];
 	switch (action.type) {
 		case 'bigCookieClick':
-			state.cookies = old.cookies+1;
-			return state;
+			return state.set('cookies', state.get('cookies')+1);
 		case 'buildingPurchase':
-			state.cookies = old.cookies-1;
-			if(state.cookies<0) throw new Error('Cannot have fewer than 0 cookies!');
+			if(state.get('cookies')<1) throw new Error('Insufficent funds!');
+			return state.set('cookies', state.get('cookies')+1);
 			return state;
 		default:
 			return state;
@@ -42,7 +39,7 @@ function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, props.state),
 		React.createElement('h1', {}, 'Big Cookie'),
-		React.createElement('div', {}, props.state.cookies + ' Cookies'),
+		React.createElement('div', {}, props.state.get('cookies') + ' Cookies'),
 		React.createElement(BigCookieButton, props),
 		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
@@ -80,7 +77,7 @@ function onLoad(){
 		cookies: 0,
 		handmadeCookies: 0,
 	};
-	var store = Redux.createStore(arccReducer, initialState);
+	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
 	render();
 	function render(){
