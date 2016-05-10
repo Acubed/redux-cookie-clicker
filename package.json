@@ -1,0 +1,23 @@
+{
+  "name": "awwright-redux-cookie-clicker",
+  "version": "0.0.0",
+  "description": "Royal Machine's Bakery",
+  "main": "httpd.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Acubed/redux-cookie-clicker"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "author": "Austin Wright",
+  "license": "Public Domain",
+  "dependencies": {
+    "express": "^4.13.4",
+    "nunjucks": "^2.4.2",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
+  }
+}
