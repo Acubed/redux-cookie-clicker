@@ -26,6 +26,8 @@ function arccReducer(state, action) {
 		throw new Error('Missing application state');
 	}
 	switch (action.type) {
+		case 'setState':
+			return action.state;
 		case 'bigCookieClick':
 			var cookiesNow = CookiesNow(state, action.ts);
 			return state.merge({
@@ -96,6 +98,8 @@ function CookieClickerMain(props) {
 			}));
 		})),
 		React.createElement('h1', {}, 'Options'),
+		React.createElement('button', {type:'button', onClick:props.onSaveGame}, "Save Game"),
+		React.createElement('button', {type:'button', onClick:props.onLoadGame}, "Load Game"),
 		React.createElement('h1', {}, 'Stats'),
 		React.createElement('pre', {}, JSON.stringify(props.state,null,'\t')),
 		React.createElement('h1', {}, 'Info'),
@@ -131,11 +135,13 @@ function onLoad(){
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
-	window.setInterval(render, 200);
+	window.setInterval(render, 100);
 	render();
 	function render(){
 		var props = {
 			state: store.getState(),
+			onLoadGame: function(){ var state=Immutable.fromJS(JSON.parse(window.localStorage.getItem("saved"))); store.dispatch({type:'setState', state:state}); },
+			onSaveGame: function(){ window.localStorage.setItem("saved", JSON.stringify(store.getState())); },
 			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick', ts:ts()}); },
 			onPurchase: function(e){ store.dispatch({type:'buildingPurchase', ts:ts(), buildingName:e.name}); },
 		};
