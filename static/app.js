@@ -59,7 +59,7 @@ function StorePurchaseButton(props) {
 }
 
 function HelloMessage(props) {
-	return React.createElement("div", null, ""+props.name+"'s Bakery");
+	return React.createElement("div", null, ""+props.bakeryName+"'s Bakery");
 }
 
 function BigCookieButton(props) {
@@ -73,7 +73,7 @@ function onLoad(){
 		arccStateVersion: 1,
 		startDate: new Date().getTime(),
 		playMode: 'full',
-		name: 'Snazzy Kitten',
+		bakeryName: 'Snazzy Kitten',
 		cookies: 0,
 		handmadeCookies: 0,
 	};
