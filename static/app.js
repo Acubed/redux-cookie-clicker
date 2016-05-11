@@ -27,14 +27,19 @@ function arccReducer(state, action) {
 	}
 	switch (action.type) {
 		case 'bigCookieClick':
-			return state.set('ts', action.ts).set('cookies', state.get('cookies')+1);
+			var cookiesNow = CookiesNow(state, action.ts);
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow+1,
+			});
 		case 'buildingPurchase':
+			var cookiesNow = CookiesNow(state, action.ts);
 			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
 			var cost = buildingCost(state, action.buildingName);
 			if(state.get('cookies')<cost) throw new Error('Insufficent funds!');
 			return state.mergeDeep({
 				ts: action.ts,
-				cookies: state.get('cookies')-cost,
+				cookies: cookiesNow-cost,
 				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
 			});
 		default:
@@ -54,12 +59,31 @@ function buildingCost(state, name){
 	return cost;
 }
 
+function CpSTotal(state){
+	var buildingsTotal = buildingTypeList.reduce(function(sum, v){
+			return sum + CpSBuilding(state, v.name);
+	}, 0);
+	return buildingsTotal;
+}
+
+function CpSBuilding(state, name){
+	var building = buildingTypes[name];
+	var buildingCount = state.get('buildings').get(name).get('count');
+	var rate = building.baseClicks * buildingCount;
+	return rate;
+}
+
+function CookiesNow(state, now){
+	if(!now) now = ts();
+	return state.get('cookies') + (now-state.get('ts'))/1000*CpSTotal(state);
+}
 
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, {name:props.state.get('bakeryName')}),
 		React.createElement('h1', {}, 'Big Cookie'),
-		React.createElement('div', {}, props.state.get('cookies') + ' Cookies'),
+		React.createElement('div', {}, Math.floor(CookiesNow(props.state, ts())) + ' Cookies'),
+		React.createElement('div', {}, CpSTotal(props.state) + ' Cookies per Second'),
 		React.createElement(BigCookieButton, props),
 		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
@@ -107,6 +131,7 @@ function onLoad(){
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
+	window.setInterval(render, 1000);
 	render();
 	function render(){
 		var props = {
