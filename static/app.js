@@ -19,6 +19,12 @@ var buildingTypeList = [
 var buildingTypes = {};
 buildingTypeList.forEach(function(v){ buildingTypes[v.name] = v; });
 
+var upgradeList = [
+	{label:'Reinforced index finger', unlock:{'buildings.cursor.count.gte':1}, cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Carpal tunnel prevention cream', unlock:{'buildings.cursor.count.gte':1}, cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
+	{label:'Ambidextrous', unlock:{'buildings.cursor.count.gte':10}, cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+];
+
 var priceIncrease = 1.15;
 
 // Section 2. State machine
@@ -85,6 +91,16 @@ function CookiesNow(state, now){
 	return state.get('cookies') + (now-state.get('ts'))/1000*CpSTotal(state);
 }
 
+function serializeState(state){
+	return JSON.stringify(state);
+}
+
+function restoreState(json){
+	var state = Immutable.fromJS(JSON.parse(json));
+	state = state.set('upgradesPurchased', Immutable.Set.of(state.get('upgradesPurchased')));
+	return state;
+}
+
 // Section 4. User Interface
 
 function CookieClickerMain(props) {
@@ -96,6 +112,15 @@ function CookieClickerMain(props) {
 		React.createElement(BigCookieButton, props),
 		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
+		React.createElement('h2', {}, 'Upgrades'),
+		React.createElement('ul', {}, upgradeList.map(function(v){
+			return React.createElement('li', {}, React.createElement(UpgradePurchaseButton, {
+				label: v.label,
+				price: v.cost,
+				onClick: function(){ props.onUpgradePurchase({name:v.name}); },
+			}));
+		})),
+		React.createElement('h2', {}, 'Buildings'),
 		React.createElement('ul', {}, buildingTypeList.map(function(v){
 			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
 				label: v.label,
@@ -112,6 +137,10 @@ function CookieClickerMain(props) {
 		React.createElement('h1', {}, 'Info'),
 		React.createElement('p', {}, 'See the README'),
     ]);
+}
+
+function UpgradePurchaseButton(props) {
+	return React.createElement("button", {type:'button', onClick:props.onClick}, props.label+': '+props.price);
 }
 
 function StorePurchaseButton(props) {
@@ -149,8 +178,8 @@ function onLoad(){
 	function render(){
 		var props = {
 			state: store.getState(),
-			onLoadGame: function(){ var state=Immutable.fromJS(JSON.parse(window.localStorage.getItem("saved"))); store.dispatch({type:'setState', state:state}); },
-			onSaveGame: function(){ window.localStorage.setItem("saved", JSON.stringify(store.getState())); },
+			onLoadGame: function(){ var state=restoreState(window.localStorage.getItem("saved")); store.dispatch({type:'setState', state:state}); },
+			onSaveGame: function(){ window.localStorage.setItem("saved", serializeState(store.getState())); },
 			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick', ts:ts()}); },
 			onPurchase: function(e){ store.dispatch({type:'buildingPurchase', ts:ts(), buildingName:e.name}); },
 		};
