@@ -1,4 +1,5 @@
 
+// Section 1. Static game data
 var buildingTypeList = [
 	{label:'Cursor', name:'cursor', baseCost:15, baseClicks:0.1},
 	{label:'Grandma', name:'grandma', baseCost:100, baseClicks:1},
@@ -20,7 +21,7 @@ buildingTypeList.forEach(function(v){ buildingTypes[v.name] = v; });
 
 var priceIncrease = 1.15;
 
-
+// Section 2. State machine
 function arccReducer(state, action) {
 	if (typeof state != 'object') {
 		throw new Error('Missing application state');
@@ -52,6 +53,8 @@ function arccReducer(state, action) {
 	}
 }
 
+// Section 3. Utility functions
+
 function ts(){
 	return new Date().getTime();
 }
@@ -81,6 +84,8 @@ function CookiesNow(state, now){
 	if(!now) now = ts();
 	return state.get('cookies') + (now-state.get('ts'))/1000*CpSTotal(state);
 }
+
+// Section 4. User Interface
 
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
@@ -122,6 +127,8 @@ function BigCookieButton(props) {
        React.createElement('button', {type:'button', onClick:props.onBigCookieClick}, "Cookie")
    ]);
 }
+
+// Section 5. Document initialization
 
 function onLoad(){
 	var startDate = ts();
