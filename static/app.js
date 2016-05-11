@@ -25,10 +25,12 @@ function upgraderBuildingMinimum(buildingType, buildingCount){
 	}
 }
 var upgradeList = [
-	{label:'Reinforced index finger', unlock:upgraderBuildingMinimum('cursor', 1), cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
-	{label:'Carpal tunnel prevention cream', unlock:upgraderBuildingMinimum('cursor', 1), cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
-	{label:'Ambidextrous', unlock:upgraderBuildingMinimum('cursor', 10), cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Reinforced index finger', unlocked:upgraderBuildingMinimum('cursor', 1), cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Carpal tunnel prevention cream', unlocked:upgraderBuildingMinimum('cursor', 1), cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
+	{label:'Ambidextrous', unlocked:upgraderBuildingMinimum('cursor', 10), cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
 ];
+var upgradeTypes = {};
+upgradeList.forEach(function(v){ upgradeTypes[v.label] = v; });
 
 var priceIncrease = 1.15;
 
@@ -119,6 +121,8 @@ function CookieClickerMain(props) {
 		React.createElement('h1', {}, 'Store'),
 		React.createElement('h2', {}, 'Upgrades'),
 		React.createElement('ul', {}, upgradeList.map(function(v){
+			if(props.state.get('upgradesPurchased').has(v.label)) return null;
+			if(!upgradeTypes[v.label].unlocked(props.state)) return null;
 			return React.createElement('li', {}, React.createElement(UpgradePurchaseButton, {
 				label: v.label,
 				price: v.cost,
@@ -175,6 +179,7 @@ function onLoad(){
 		cookies: 0,
 		handmadeCookies: 0,
 		buildings: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, new Immutable.Map({count:0})]; })),
+		upgradesPurchased: new Immutable.Set([])
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
