@@ -51,6 +51,16 @@ function arccReducer(state, action) {
 				ts: action.ts,
 				cookies: cookiesNow+1,
 			});
+		case 'upgradePurchase':
+			var cookiesNow = CookiesNow(state, action.ts);
+			var hasUpgrade = state.get('upgradesPurchased').has(action.upgradeName);
+			var cost = upgradeTypes[action.upgradeName].cost;
+			if(cookiesNow<cost) throw new Error('Insufficent funds!');
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow-cost,
+				upgradesPurchased: state.get('upgradesPurchased').add(action.upgradeName),
+			});
 		case 'buildingPurchase':
 			var cookiesNow = CookiesNow(state, action.ts);
 			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
@@ -126,7 +136,7 @@ function CookieClickerMain(props) {
 			return React.createElement('li', {}, React.createElement(UpgradePurchaseButton, {
 				label: v.label,
 				price: v.cost,
-				onClick: function(){ props.onUpgradePurchase({name:v.name}); },
+				onClick: function(){ props.onUpgradePurchase({name:v.label}); },
 			}));
 		})),
 		React.createElement('h2', {}, 'Buildings'),
@@ -179,7 +189,7 @@ function onLoad(){
 		cookies: 0,
 		handmadeCookies: 0,
 		buildings: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, new Immutable.Map({count:0})]; })),
-		upgradesPurchased: new Immutable.Set([])
+		upgradesPurchased: new Immutable.Set,
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
@@ -191,6 +201,7 @@ function onLoad(){
 			onLoadGame: function(){ var state=restoreState(window.localStorage.getItem("saved")); store.dispatch({type:'setState', state:state}); },
 			onSaveGame: function(){ window.localStorage.setItem("saved", serializeState(store.getState())); },
 			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick', ts:ts()}); },
+			onUpgradePurchase: function(e){ store.dispatch({type:'upgradePurchase', ts:ts(), upgradeName:e.name}); },
 			onPurchase: function(e){ store.dispatch({type:'buildingPurchase', ts:ts(), buildingName:e.name}); },
 		};
 		ReactDOM.render(React.createElement(CookieClickerMain, props), document.getElementById('main'));
