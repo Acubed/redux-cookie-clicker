@@ -29,9 +29,8 @@ function arccReducer(state, action) {
 		case 'bigCookieClick':
 			return state.set('ts', action.ts).set('cookies', state.get('cookies')+1);
 		case 'buildingPurchase':
-			var building = buildingTypes[action.buildingName];
 			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
-			var cost = Math.floor(building.baseCost * Math.pow(priceIncrease, buildingCount));
+			var cost = buildingCost(state, action.buildingName);
 			if(state.get('cookies')<cost) throw new Error('Insufficent funds!');
 			return state.mergeDeep({
 				ts: action.ts,
@@ -48,10 +47,17 @@ function ts(){
 	return new Date().getTime();
 }
 
+function buildingCost(state, name){
+	var building = buildingTypes[name];
+	var buildingCount = state.get('buildings').get(name).get('count');
+	var cost = Math.floor(building.baseCost * Math.pow(priceIncrease, buildingCount));
+	return cost;
+}
+
 
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
-		React.createElement(HelloMessage, props.state),
+		React.createElement(HelloMessage, {name:props.state.get('bakeryName')}),
 		React.createElement('h1', {}, 'Big Cookie'),
 		React.createElement('div', {}, props.state.get('cookies') + ' Cookies'),
 		React.createElement(BigCookieButton, props),
@@ -59,9 +65,9 @@ function CookieClickerMain(props) {
 		React.createElement('h1', {}, 'Store'),
 		React.createElement('ul', {}, buildingTypeList.map(function(v){
 			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
-				label:v.label,
-				price:v.baseCost,
-				inventory:0,
+				label: v.label,
+				price: buildingCost(props.state, v.name),
+				inventory: props.state.get('buildings').get(v.name).get('count'),
 				onClick: function(){ props.onPurchase({name:v.name}); },
 			}));
 		})),
@@ -78,7 +84,7 @@ function StorePurchaseButton(props) {
 }
 
 function HelloMessage(props) {
-	return React.createElement("div", null, ""+props.bakeryName+"'s Bakery");
+	return React.createElement("div", null, ""+props.name+"'s Bakery");
 }
 
 function BigCookieButton(props) {
