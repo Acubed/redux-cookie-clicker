@@ -36,7 +36,7 @@ function arccReducer(state, action) {
 			var cookiesNow = CookiesNow(state, action.ts);
 			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
 			var cost = buildingCost(state, action.buildingName);
-			if(state.get('cookies')<cost) throw new Error('Insufficent funds!');
+			if(cookiesNow<cost) throw new Error('Insufficent funds!');
 			return state.mergeDeep({
 				ts: action.ts,
 				cookies: cookiesNow-cost,
@@ -131,7 +131,7 @@ function onLoad(){
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
-	window.setInterval(render, 1000);
+	window.setInterval(render, 200);
 	render();
 	function render(){
 		var props = {
