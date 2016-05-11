@@ -19,10 +19,15 @@ var buildingTypeList = [
 var buildingTypes = {};
 buildingTypeList.forEach(function(v){ buildingTypes[v.name] = v; });
 
+function upgraderBuildingMinimum(buildingType, buildingCount){
+	return function(state){
+		return state.get('buildings').get(buildingType).get('count') >= buildingCount;
+	}
+}
 var upgradeList = [
-	{label:'Reinforced index finger', unlock:{'buildings.cursor.count.gte':1}, cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
-	{label:'Carpal tunnel prevention cream', unlock:{'buildings.cursor.count.gte':1}, cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
-	{label:'Ambidextrous', unlock:{'buildings.cursor.count.gte':10}, cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Reinforced index finger', unlock:upgraderBuildingMinimum('cursor', 1), cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Carpal tunnel prevention cream', unlock:upgraderBuildingMinimum('cursor', 1), cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
+	{label:'Ambidextrous', unlock:upgraderBuildingMinimum('cursor', 10), cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
 ];
 
 var priceIncrease = 1.15;
