@@ -25,7 +25,10 @@ function arccReducer(state, action) {
 	if (typeof state != 'object') {
 		throw new Error('Missing application state');
 	}
+	//if(typeof action.type != 'string') return state;
 	switch (action.type) {
+		case '@@redux/INIT':
+			return state;
 		case 'setState':
 			return action.state;
 		case 'bigCookieClick':
@@ -45,8 +48,7 @@ function arccReducer(state, action) {
 				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
 			});
 		default:
-			// Error here maybe?
-			return state;
+			throw new Error('Unknown action type '+JSON.stringify(action.type));
 	}
 }
 
