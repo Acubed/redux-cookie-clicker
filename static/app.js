@@ -1,5 +1,5 @@
 
-var buildingTypes = [
+var buildingTypeList = [
 	{label:'Cursor', name:'cursor', baseCost:15, baseClicks:0.1},
 	{label:'Grandma', name:'grandma', baseCost:100, baseClicks:1},
 	{label:'Farm', name:'farm', baseCost:1100, baseClicks:8},
@@ -15,6 +15,10 @@ var buildingTypes = [
 	{label:'Antimatter Condenser', name:'antimattercondenser', baseCost:170e12, baseClicks:430e6},
 	{label:'Prism', name:'prism', baseCost:2100e12, baseClicks:2900e6},
 ];
+var buildingTypes = {};
+buildingTypeList.forEach(function(v){ buildingTypes[v.name] = v; });
+
+var priceIncrease = 1.15;
 
 
 function arccReducer(state, action) {
@@ -23,16 +27,26 @@ function arccReducer(state, action) {
 	}
 	switch (action.type) {
 		case 'bigCookieClick':
-			return state.set('cookies', state.get('cookies')+1);
+			return state.set('ts', action.ts).set('cookies', state.get('cookies')+1);
 		case 'buildingPurchase':
-			if(state.get('cookies')<1) throw new Error('Insufficent funds!');
-			return state.set('cookies', state.get('cookies')+1);
-			return state;
+			var building = buildingTypes[action.buildingName];
+			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
+			var cost = Math.floor(building.baseCost * Math.pow(priceIncrease, buildingCount));
+			if(state.get('cookies')<cost) throw new Error('Insufficent funds!');
+			return state.mergeDeep({
+				ts: action.ts,
+				cookies: state.get('cookies')-cost,
+				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
+			});
 		default:
+			// Error here maybe?
 			return state;
 	}
 }
 
+function ts(){
+	return new Date().getTime();
+}
 
 
 function CookieClickerMain(props) {
@@ -43,8 +57,13 @@ function CookieClickerMain(props) {
 		React.createElement(BigCookieButton, props),
 		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
-		React.createElement('ul', {}, buildingTypes.map(function(v){
-			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {label:v.label, price:v.baseCost, inventory:0}));
+		React.createElement('ul', {}, buildingTypeList.map(function(v){
+			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
+				label:v.label,
+				price:v.baseCost,
+				inventory:0,
+				onClick: function(){ props.onPurchase({name:v.name}); },
+			}));
 		})),
 		React.createElement('h1', {}, 'Options'),
 		React.createElement('h1', {}, 'Stats'),
@@ -55,7 +74,7 @@ function CookieClickerMain(props) {
 }
 
 function StorePurchaseButton(props) {
-	return React.createElement("button", {type:'button'}, props.label+': '+props.price+' ('+props.inventory+')');
+	return React.createElement("button", {type:'button', onClick:props.onClick}, props.label+': '+props.price+' ('+props.inventory+')');
 }
 
 function HelloMessage(props) {
@@ -69,13 +88,16 @@ function BigCookieButton(props) {
 }
 
 function onLoad(){
+	var startDate = ts();
 	var initialState = {
 		arccStateVersion: 1,
-		startDate: new Date().getTime(),
+		startDate: startDate,
+		ts: startDate,
 		playMode: 'full',
 		bakeryName: 'Snazzy Kitten',
 		cookies: 0,
 		handmadeCookies: 0,
+		buildings: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, new Immutable.Map({count:0})]; })),
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
 	store.subscribe(render);
@@ -83,7 +105,8 @@ function onLoad(){
 	function render(){
 		var props = {
 			state: store.getState(),
-			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick'}); },
+			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick', ts:ts()}); },
+			onPurchase: function(e){ store.dispatch({type:'buildingPurchase', ts:ts(), buildingName:e.name}); },
 		};
 		ReactDOM.render(React.createElement(CookieClickerMain, props), document.getElementById('main'));
 	}
