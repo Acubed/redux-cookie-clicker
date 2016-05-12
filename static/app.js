@@ -43,8 +43,19 @@ function arccReducer(state, action) {
 	switch (action.type) {
 		case '@@redux/INIT':
 			return state;
+		case 'fixState':
+			// Saves the current number of cookies to "cookies" and maybe anything else needed to ensure the state is in a good place for saving
+			var cookiesNow = CookiesNow(state, action.ts);
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow,
+			});
 		case 'setState':
+			// Merely load a given state
+			// If you want to continue as if cookies were being generated in the background, after being saved, use this
 			return action.state;
+		case 'resume':
+			return action.state.set('ts', action.ts);
 		case 'bigCookieClick':
 			var cookiesNow = CookiesNow(state, action.ts);
 			return state.merge({
@@ -113,9 +124,10 @@ function serializeState(state){
 }
 
 function restoreState(json){
-	var state = Immutable.fromJS(JSON.parse(json));
-	state = state.set('upgradesPurchased', Immutable.Set.of(state.get('upgradesPurchased')));
-	return state;
+	var obj = JSON.parse(json);
+	return Immutable.fromJS(obj).merge({
+		upgradesPurchased: Immutable.Set.of.apply(Immutable.Set, obj.upgradesPurchased),
+	});
 }
 
 // Section 4. User Interface
@@ -198,8 +210,8 @@ function onLoad(){
 	function render(){
 		var props = {
 			state: store.getState(),
-			onLoadGame: function(){ var state=restoreState(window.localStorage.getItem("saved")); store.dispatch({type:'setState', state:state}); },
-			onSaveGame: function(){ window.localStorage.setItem("saved", serializeState(store.getState())); },
+			onLoadGame: function(){ var state=restoreState(window.localStorage.getItem("saved")); store.dispatch({type:'resume', state:state, ts:ts()}); },
+			onSaveGame: function(){ store.dispatch({type:'fixState', ts:ts()}); window.localStorage.setItem("saved", serializeState(store.getState())); },
 			onBigCookieClick: function(){ store.dispatch({type:'bigCookieClick', ts:ts()}); },
 			onUpgradePurchase: function(e){ store.dispatch({type:'upgradePurchase', ts:ts(), upgradeName:e.name}); },
 			onPurchase: function(e){ store.dispatch({type:'buildingPurchase', ts:ts(), buildingName:e.name}); },
