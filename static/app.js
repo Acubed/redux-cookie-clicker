@@ -295,7 +295,7 @@ function initialState(){
 
 function onLoad(){
 	var e = document.getElementById('state');
-	var state = e ? restoreState(JSON.parse(e.innerText)) : initialState() ;
+	var state = e ? restoreState(e.innerText) : initialState() ;
 	var store = Redux.createStore(arccReducer, state);
 	window.Game = {store:store};
 	store.subscribe(render);

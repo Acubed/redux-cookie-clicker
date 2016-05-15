@@ -44,11 +44,12 @@ function renderCookieClickerMain(state) {
 
 app.get('/', function(req, res) {
 	var state = CC.initialState();
-	state = state.set('cookies', 1e30);
+	//state = state.set('cookies', 1e30);
+	res.setHeader('Content-Type', 'application/xhtml+xml');
 	res.render('static/render.html', {
 		name: 'Royal Machine',
 		body: renderCookieClickerMain(state),
-		statejson: JSON.stringify(CC.serializeState(state)).replace(/\//g, '\\/'),
+		statejson: CC.serializeState(state).replace(/\//g, '\\/'),
 	});
 });
 
