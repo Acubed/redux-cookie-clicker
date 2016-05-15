@@ -111,6 +111,13 @@ function CpSBuilding(state, name){
 	var building = buildingTypes[name];
 	var buildingCount = state.get('buildings').get(name).get('count');
 	var rate = building.baseClicks * buildingCount;
+	switch(name){
+		case 'cursor':
+			if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
+			if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
+			if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
+			break;
+	}
 	return rate;
 }
 
