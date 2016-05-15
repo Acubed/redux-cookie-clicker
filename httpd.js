@@ -49,7 +49,7 @@ app.get('/', function(req, res) {
 	res.render('static/render.html', {
 		name: 'Royal Machine',
 		body: renderCookieClickerMain(state),
-		statejson: CC.serializeState(state).replace(/\//g, '\\/'),
+		statejson: CC.serializeState(state),
 	});
 });
 
