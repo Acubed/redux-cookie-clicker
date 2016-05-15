@@ -29,10 +29,9 @@ var env = nunjucks.configure({
 app.use(express.static(publicPath));
 
 
-function renderCookieClickerMain() {
-	console.log(CC.initialState());
+function renderCookieClickerMain(state) {
 	var props = {
-		state: CC.initialState(),
+		state: state,
 		onLoadGame: function(){ },
 		onSaveGame: function(){ },
 		onBigCookieClick: function(){ },
@@ -44,11 +43,12 @@ function renderCookieClickerMain() {
 }
 
 app.get('/', function(req, res) {
-	//res.sendFile(path.resolve(__dirname, 'index.html'));
-	//return renderRoute(res, 'static/render.html', {main:renderCookieClickerMain()});
+	var state = CC.initialState();
+	state = state.set('cookies', 1e30);
 	res.render('static/render.html', {
 		name: 'Royal Machine',
-		body: renderCookieClickerMain(),
+		body: renderCookieClickerMain(state),
+		statejson: JSON.stringify(CC.serializeState(state)).replace(/\//g, '\\/'),
 	});
 });
 

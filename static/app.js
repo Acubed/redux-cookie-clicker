@@ -147,10 +147,12 @@ function CookiesNow(state, now){
 	return state.get('cookies') + (now-state.get('ts'))/1000*CpSTotal(state);
 }
 
+exports.serializeState = serializeState;
 function serializeState(state){
 	return JSON.stringify(state);
 }
 
+exports.restoreState = restoreState;
 function restoreState(json){
 	var obj = JSON.parse(json);
 	return Immutable.fromJS(obj).merge({
@@ -292,7 +294,9 @@ function initialState(){
 }
 
 function onLoad(){
-	var store = Redux.createStore(arccReducer, initialState());
+	var e = document.getElementById('state');
+	var state = e ? restoreState(JSON.parse(e.innerText)) : initialState() ;
+	var store = Redux.createStore(arccReducer, state);
 	window.Game = {store:store};
 	store.subscribe(render);
 	window.setInterval(render, 100);
