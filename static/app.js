@@ -24,70 +24,51 @@ function upgraderBuildingMinimum(buildingType, buildingCount){
 		return state.get('buildings').get(buildingType).get('count') >= buildingCount;
 	}
 }
+function upgraderBuildingMinimumGrandma(buildingType, buildingCount){
+	return function(state){
+		return (state.get('buildings').get(buildingType).get('count') >= 15) && (state.get('buildings').get('grandma').get('count') >= 1);
+	}
+}
 var upgradeList = [
+	// Cursor upgrades
 	{label:'Reinforced index finger', unlocked:upgraderBuildingMinimum('cursor', 1), cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
 	{label:'Carpal tunnel prevention cream', unlocked:upgraderBuildingMinimum('cursor', 1), cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
 	{label:'Ambidextrous', unlocked:upgraderBuildingMinimum('cursor', 10), cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
+	{label:'Thousand fingers', unlocked:upgraderBuildingMinimum('cursor', 20), cost:100000, descriptionHtml:'The mouse and cursors gain +0.1 cookies for each non-cursor object owned.'},
+	{label:'Million fingers', unlocked:upgraderBuildingMinimum('cursor', 40), cost:10e6, descriptionHtml:'The mouse and cursors gain +0.5 cookies for each non-cursor object owned.'},
+	{label:'Billion fingers', unlocked:upgraderBuildingMinimum('cursor', 80), cost:100e6, descriptionHtml:'The mouse and cursors gain +5 cookies for each non-cursor object owned.'},
+	// Grandma upgrades
+	{label:'Forwards from grandma', unlocked:upgraderBuildingMinimum('grandma', 1), cost:1000, descriptionHtml:'Grandmas are twice as efficient.'},
+	{label:'Steel-plated rolling pins', unlocked:upgraderBuildingMinimum('grandma', 5), cost:5000, descriptionHtml:'Grandmas are twice as efficient.'},
+	{label:'Lubricated dentures', unlocked:upgraderBuildingMinimum('grandma', 25), cost:50000, descriptionHtml:'Grandmas are twice as efficient.'},
+	{label:'Prune juice', unlocked:upgraderBuildingMinimum('grandma', 50), cost:5e6, descriptionHtml:'Description'},
+	{label:'Double-thick glasses', unlocked:upgraderBuildingMinimum('grandma', 100), cost:500e6, descriptionHtml:'Description'},
+	{label:'Aging agents', unlocked:upgraderBuildingMinimum('grandma', 150), cost:50e9, descriptionHtml:'Description'},
+	{label:'Xtreme walkers', unlocked:upgraderBuildingMinimum('grandma', 200), cost:50e12, descriptionHtml:'Description'},
+	{label:'The Unbridling', unlocked:upgraderBuildingMinimum('grandma', 250), cost:50e15, descriptionHtml:'Description'},
+	// The Grandma-x-Grandma upgrades
+	{label:'Farmer grandmas', unlocked:upgraderBuildingMinimumGrandma('farm'), cost:55000, descriptionHtml:'Grandmas are twice as efficient. Farms gain +1% CpS per grandma.'},
+	{label:'Miner grandmas', unlocked:upgraderBuildingMinimumGrandma('mine'), cost:600000, descriptionHtml:'Grandmas are twice as efficient. Mines gain +1% CpS per 2 grandmas.'},
+	{label:'Worker grandmas', unlocked:upgraderBuildingMinimumGrandma('factory'), cost:6.5e6, descriptionHtml:'Grandmas are twice as efficient. Factories gain +1% CpS per 3 grandmas.'},
+	{label:'Banker grandmas', unlocked:upgraderBuildingMinimumGrandma('bank'), cost:70e6, descriptionHtml:'Grandmas are twice as efficient. Banks gain +1% CpS per 4 grandmas'},
+	{label:'Priestess grandmas', unlocked:upgraderBuildingMinimumGrandma('temple'), cost:1e9, descriptionHtml:'Grandmas are twice as efficient. Temples gain +1% CpS per 5 grandmas.'},
+	{label:'Witch grandmas', unlocked:upgraderBuildingMinimumGrandma('wizardtower'), cost:16.5e9, descriptionHtml:'Grandmas are twice as efficient. Wizard towers gain +1% CpS per 6 grandmas.'},
+	{label:'Cosmic grandmas', unlocked:upgraderBuildingMinimumGrandma('shipment'), cost:255e9, descriptionHtml:'Grandmas are twice as efficient. Shipments gain +1% CpS per 7 grandmas.'},
+	{label:'Transmuted grandmas', unlocked:upgraderBuildingMinimumGrandma('alchemylab'), cost:3.75e12, descriptionHtml:'Grandmas are twice as efficient. Alchemy labs gain +1% CpS per 8 grandmas.'},
+	{label:'Altered grandmas', unlocked:upgraderBuildingMinimumGrandma('portal'), cost:50e12, descriptionHtml:'Grandmas are twice as efficient. Portals gain +1% CpS per 9 grandmas.'},
+	{label:'Grandmas\' grandmas', unlocked:upgraderBuildingMinimumGrandma('timemachine'), cost:700e12, descriptionHtml:'Grandmas are twice as efficient. Time machines gain +1% CpS per 10 grandmas.'},
+	{label:'Antigrandmas grandmas', unlocked:upgraderBuildingMinimumGrandma('antimattercondenser'), cost:8.5e15, descriptionHtml:'Grandmas are twice as efficient. Antimatter condensers gain +1% CpS per 11 grandmas.'},
+	{label:'Rainbow grandmas', unlocked:upgraderBuildingMinimumGrandma('prism'), cost:105e15, descriptionHtml:'Grandmas are twice as efficient. Prisms gain +1% CpS per 12 grandmas.'},
+	// Farm upgrades
+	//{label:'Name', unlocked:upgraderBuildingMinimumGrandma('grandma'), cost:100, descriptionHtml:'Description'},
 ];
 var upgradeTypes = {};
 upgradeList.forEach(function(v){ upgradeTypes[v.label] = v; });
 
 var priceIncrease = 1.15;
 
-// Section 2. State machine
-function arccReducer(state, action) {
-	if (typeof state != 'object') {
-		throw new Error('Missing application state');
-	}
-	//if(typeof action.type != 'string') return state;
-	switch (action.type) {
-		case '@@redux/INIT':
-			return state;
-		case 'fixState':
-			// Saves the current number of cookies to "cookies" and maybe anything else needed to ensure the state is in a good place for saving
-			var cookiesNow = CookiesNow(state, action.ts);
-			return state.merge({
-				ts: action.ts,
-				cookies: cookiesNow,
-			});
-		case 'setState':
-			// Merely load a given state
-			// If you want to continue as if cookies were being generated in the background, after being saved, use this
-			return action.state;
-		case 'resume':
-			return action.state.set('ts', action.ts);
-		case 'bigCookieClick':
-			var cookiesNow = CookiesNow(state, action.ts);
-			return state.merge({
-				ts: action.ts,
-				cookies: cookiesNow+1,
-			});
-		case 'upgradePurchase':
-			var cookiesNow = CookiesNow(state, action.ts);
-			var hasUpgrade = state.get('upgradesPurchased').has(action.upgradeName);
-			var cost = upgradeTypes[action.upgradeName].cost;
-			if(cookiesNow<cost) throw new Error('Insufficent funds!');
-			return state.merge({
-				ts: action.ts,
-				cookies: cookiesNow-cost,
-				upgradesPurchased: state.get('upgradesPurchased').add(action.upgradeName),
-			});
-		case 'buildingPurchase':
-			var cookiesNow = CookiesNow(state, action.ts);
-			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
-			var cost = buildingCost(state, action.buildingName);
-			if(cookiesNow<cost) throw new Error('Insufficent funds!');
-			return state.mergeDeep({
-				ts: action.ts,
-				cookies: cookiesNow-cost,
-				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
-			});
-		default:
-			throw new Error('Unknown action type '+JSON.stringify(action.type));
-	}
-}
 
-// Section 3. Utility functions
+// Section 2. Utility functions
 
 function ts(){
 	return new Date().getTime();
@@ -117,7 +98,38 @@ function CpSBuilding(state, name){
 			if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
 			if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
 			break;
+		case 'grandma':
+			if(state.get('upgradesPurchased').has('Forwards from grandma')) rate*=2;
+			if(state.get('upgradesPurchased').has('Steel-plated rolling pins')) rate*=2;
+			if(state.get('upgradesPurchased').has('Lubricated dentures')) rate*=2;
+			if(state.get('upgradesPurchased').has('Prune juice')) rate*=2;
+			if(state.get('upgradesPurchased').has('Double-thick glasses')) rate*=2;
+			if(state.get('upgradesPurchased').has('Aging agents')) rate*=2;
+			if(state.get('upgradesPurchased').has('Xtreme walkers')) rate*=2;
+			if(state.get('upgradesPurchased').has('The Unbridling')) rate*=2;
+			if(state.get('upgradesPurchased').has('Farmer grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Miner grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Worker grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Banker grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Priestess grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Witch grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Cosmic grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Transmuted grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Altered grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Grandmas\' grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Antigrandmas grandmas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Rainbow grandmas')) rate*=2;
+			break;
 	}
+	return rate;
+}
+
+function bigCookieClickCookies(state){
+	var rate = 1;
+	// These upgrades also affect big cookie clicks (it's supposed to be the same thing)
+	if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
+	if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
+	if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
 	return rate;
 }
 
@@ -135,6 +147,60 @@ function restoreState(json){
 	return Immutable.fromJS(obj).merge({
 		upgradesPurchased: Immutable.Set.of.apply(Immutable.Set, obj.upgradesPurchased),
 	});
+}
+
+
+// Section 3. State machine
+function arccReducer(state, action) {
+	if (typeof state != 'object') {
+		throw new Error('Missing application state');
+	}
+	//if(typeof action.type != 'string') return state;
+	switch (action.type) {
+		case '@@redux/INIT':
+			return state;
+		case 'fixState':
+			// Saves the current number of cookies to "cookies" and maybe anything else needed to ensure the state is in a good place for saving
+			var cookiesNow = CookiesNow(state, action.ts);
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow,
+			});
+		case 'setState':
+			// Merely load a given state
+			// If you want to continue as if cookies were being generated in the background, after being saved, use this
+			return action.state;
+		case 'resume':
+			return action.state.set('ts', action.ts);
+		case 'bigCookieClick':
+			var cookiesNow = CookiesNow(state, action.ts);
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow + bigCookieClickCookies(state),
+			});
+		case 'upgradePurchase':
+			var cookiesNow = CookiesNow(state, action.ts);
+			var hasUpgrade = state.get('upgradesPurchased').has(action.upgradeName);
+			var cost = upgradeTypes[action.upgradeName].cost;
+			if(cookiesNow<cost) throw new Error('Insufficent funds!');
+			return state.merge({
+				ts: action.ts,
+				cookies: cookiesNow-cost,
+				upgradesPurchased: state.get('upgradesPurchased').add(action.upgradeName),
+			});
+		case 'buildingPurchase':
+			var cookiesNow = CookiesNow(state, action.ts);
+			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
+			var cost = buildingCost(state, action.buildingName);
+			if(cookiesNow<cost) throw new Error('Insufficent funds!');
+			return state.mergeDeep({
+				ts: action.ts,
+				cookies: cookiesNow-cost,
+				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
+			});
+		default:
+			throw new Error('Unknown action type '+JSON.stringify(action.type));
+	}
 }
 
 // Section 4. User Interface
@@ -211,6 +277,7 @@ function onLoad(){
 		upgradesPurchased: new Immutable.Set,
 	};
 	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
+	window.Game = {store:store};
 	store.subscribe(render);
 	window.setInterval(render, 100);
 	render();
