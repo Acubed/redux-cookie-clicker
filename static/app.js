@@ -1,4 +1,13 @@
 
+if(typeof exports=='object'){
+	var Immutable = require('immutable');
+	var React = require('react');
+}else if(typeof document=='object'){
+	var exports = {};
+	document.addEventListener("DOMContentLoaded", onLoad);
+}else{
+	//throw new Error('Unknown platform');
+}
 // Section 1. Static game data
 var buildingTypeList = [
 	{label:'Cursor', name:'cursor', baseCost:15, baseClicks:0.1},
@@ -151,6 +160,7 @@ function restoreState(json){
 
 
 // Section 3. State machine
+exports.arccReducer = arccReducer;
 function arccReducer(state, action) {
 	if (typeof state != 'object') {
 		throw new Error('Missing application state');
@@ -205,6 +215,7 @@ function arccReducer(state, action) {
 
 // Section 4. User Interface
 
+exports.CookieClickerMain = CookieClickerMain;
 function CookieClickerMain(props) {
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, {name:props.state.get('bakeryName')}),
@@ -263,7 +274,8 @@ function BigCookieButton(props) {
 
 // Section 5. Document initialization
 
-function onLoad(){
+exports.initialState = initialState;
+function initialState(){
 	var startDate = ts();
 	var initialState = {
 		arccStateVersion: 1,
@@ -276,7 +288,11 @@ function onLoad(){
 		buildings: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, new Immutable.Map({count:0})]; })),
 		upgradesPurchased: new Immutable.Set,
 	};
-	var store = Redux.createStore(arccReducer, new Immutable.Map(initialState));
+	return new Immutable.Map(initialState);
+}
+
+function onLoad(){
+	var store = Redux.createStore(arccReducer, initialState());
 	window.Game = {store:store};
 	store.subscribe(render);
 	window.setInterval(render, 100);
@@ -293,5 +309,3 @@ function onLoad(){
 		ReactDOM.render(React.createElement(CookieClickerMain, props), document.getElementById('main'));
 	}
 }
-
-document.addEventListener("DOMContentLoaded", onLoad);

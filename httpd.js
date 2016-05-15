@@ -1,7 +1,12 @@
-/* eslint-disable */
+
 var express = require('express');
 var path = require('path');
 var nunjucks = require('nunjucks');
+var React = require('react');
+var renderToString = require('react-dom/server').renderToString;
+var Redux = require('redux');
+
+var CC = require('./static/app.js');
 
 
 // Settings
@@ -24,15 +29,27 @@ var env = nunjucks.configure({
 app.use(express.static(publicPath));
 
 
-function renderRoute(res, template, options) {
-    res.render(template, {
-        name: 'Royal Machine',
-    });
+function renderCookieClickerMain() {
+	console.log(CC.initialState());
+	var props = {
+		state: CC.initialState(),
+		onLoadGame: function(){ },
+		onSaveGame: function(){ },
+		onBigCookieClick: function(){ },
+		onUpgradePurchase: function(e){ },
+		onPurchase: function(e){ },
+	};
+	var html = renderToString(React.createElement(CC.CookieClickerMain, props));
+	return html;
 }
 
 app.get('/', function(req, res) {
-    //res.sendFile(path.resolve(__dirname, 'index.html'));
-    return renderRoute(res, 'static/base.html', {});
+	//res.sendFile(path.resolve(__dirname, 'index.html'));
+	//return renderRoute(res, 'static/render.html', {main:renderCookieClickerMain()});
+	res.render('static/render.html', {
+		name: 'Royal Machine',
+		body: renderCookieClickerMain(),
+	});
 });
 
 app.listen(port, function() {
