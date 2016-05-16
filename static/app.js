@@ -226,17 +226,17 @@ function arccReducer(state, action) {
 
 exports.CookieClickerMain = CookieClickerMain;
 function CookieClickerMain(props) {
+	var state = props.state;
 	return React.createElement("div", {}, [
-		React.createElement(HelloMessage, {name:props.state.get('bakeryName')}),
+		React.createElement(HelloMessage, {name:state.get('bakeryName')}),
 		React.createElement('h1', {}, 'Big Cookie'),
 		React.createElement('div', {}, Math.floor(CookiesNow(props.state, ts())) + ' Cookies'),
 		React.createElement('div', {}, CpSTotal(props.state) + ' Cookies per Second'),
 		React.createElement(BigCookieButton, props),
-		React.createElement('h1', {}, 'Bakery'),
 		React.createElement('h1', {}, 'Store'),
 		React.createElement('h2', {}, 'Upgrades'),
 		React.createElement('ul', {}, upgradeList.map(function(v){
-			if(props.state.get('upgradesPurchased').has(v.label)) return null;
+			if(state.get('upgradesPurchased').has(v.label)) return null;
 			if(!upgradeTypes[v.label].unlocked(props.state)) return null;
 			return React.createElement('li', {}, React.createElement(UpgradePurchaseButton, {
 				label: v.label,
@@ -246,10 +246,11 @@ function CookieClickerMain(props) {
 		})),
 		React.createElement('h2', {}, 'Buildings'),
 		React.createElement('ul', {}, buildingTypeList.map(function(v){
+			if(state.get('cookiesEarned')+15<v.baseCost) return null;
 			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
 				label: v.label,
 				price: buildingCost(props.state, v.name),
-				inventory: props.state.get('buildings').get(v.name).get('count'),
+				inventory: state.get('buildings').get(v.name).get('count'),
 				onClick: function(){ props.onPurchase({name:v.name}); },
 			}));
 		})),
