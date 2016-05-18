@@ -42,15 +42,26 @@ function renderCookieClickerMain(state) {
 	return html;
 }
 
-app.get('/', function(req, res) {
-	var state = CC.initialState();
+var games = {
+	'': CC.initialState(),
+	'cheat': CC.initialState().set('cookies', 1e10).set('cookiesEarned', 1e10).set('debugMultiplier', 100),
+};
+
+app.get('/:game?', function(req, res) {
+	var state = games[req.params.game] || CC.initialState();
 	//state = state.set('cookies', 1e30);
 	res.setHeader('Content-Type', 'application/xhtml+xml');
 	res.render('static/render.html', {
-		name: 'Royal Machine',
+		name: state.get('name', 'Anonymous Coward'),
 		body: renderCookieClickerMain(state),
 		statejson: CC.serializeState(state),
 	});
+});
+
+app.put('/:game', function(req, res) {
+	res.statusCode = 500;
+	res.setHeader('Content-Type', 'text/plain');
+	res.end('Not implemented yet, sorry');
 });
 
 app.listen(port, function() {
