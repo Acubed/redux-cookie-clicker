@@ -94,7 +94,7 @@ function CpSTotal(state){
 	var buildingsTotal = buildingTypeList.reduce(function(sum, v){
 			return sum + CpSBuilding(state, v.name);
 	}, 0);
-	return buildingsTotal;
+	return buildingsTotal * state.get('debugMultiplier', 1);
 }
 
 function CpSBuilding(state, name){
