@@ -30,12 +30,12 @@ buildingTypeList.forEach(function(v){ buildingTypes[v.name] = v; });
 
 function upgraderBuildingMinimum(buildingType, buildingCount){
 	return function(state){
-		return state.get('buildings').get(buildingType).get('count') >= buildingCount;
+		return state.get('buildingCount').get(buildingType) >= buildingCount;
 	}
 }
 function upgraderBuildingMinimumGrandma(buildingType, buildingCount){
 	return function(state){
-		return (state.get('buildings').get(buildingType).get('count') >= 15) && (state.get('buildings').get('grandma').get('count') >= 1);
+		return (state.get('buildingCount').get(buildingType) >= 15) && (state.get('buildingCount').get('grandma') >= 1);
 	}
 }
 var upgradeList = [
@@ -85,7 +85,7 @@ function ts(){
 
 function buildingCost(state, name){
 	var building = buildingTypes[name];
-	var buildingCount = state.get('buildings').get(name).get('count');
+	var buildingCount = state.get('buildingCount').get(name, 0);
 	var cost = Math.floor(building.baseCost * Math.pow(priceIncrease, buildingCount));
 	return cost;
 }
@@ -99,7 +99,7 @@ function CpSTotal(state){
 
 function CpSBuilding(state, name){
 	var building = buildingTypes[name];
-	var buildingCount = state.get('buildings').get(name).get('count');
+	var buildingCount = state.get('buildingCount').get(name);
 	var rate = building.baseClicks * buildingCount;
 	switch(name){
 		case 'cursor':
@@ -208,14 +208,14 @@ function arccReducer(state, action) {
 			});
 		case 'buildingPurchase':
 			var cookiesNow = CookiesNow(state, action.ts);
-			var buildingCount = state.get('buildings').get(action.buildingName).get('count');
+			var buildingCount = state.get('buildingCount').get(action.buildingName);
 			var cost = buildingCost(state, action.buildingName);
 			if(cookiesNow<cost) throw new Error('Insufficent funds!');
 			return state.mergeDeep({
 				ts: action.ts,
 				cookies: cookiesNow-cost,
 				cookiesEarned: cookiesNow - state.get('cookies') + state.get('cookiesEarned'),
-				buildings: new Immutable.Map([[action.buildingName, new Immutable.Map({count: buildingCount+1})]]),
+				buildingCount: new Immutable.Map([[action.buildingName, buildingCount+1]]),
 			});
 		default:
 			throw new Error('Unknown action type '+JSON.stringify(action.type));
@@ -250,7 +250,7 @@ function CookieClickerMain(props) {
 			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
 				label: v.label,
 				price: buildingCost(props.state, v.name),
-				inventory: state.get('buildings').get(v.name).get('count'),
+				inventory: state.get('buildingCount').get(v.name, 0),
 				onClick: function(){ props.onPurchase({name:v.name}); },
 			}));
 		})),
@@ -296,7 +296,7 @@ function initialState(){
 		cookies: 0,
 		cookiesEarned: 0,
 		handmadeCookies: 0,
-		buildings: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, new Immutable.Map({count:0})]; })),
+		buildingCount: new Immutable.Map(buildingTypeList.map(function(v){ return [v.name, 0]; })),
 		upgradesPurchased: new Immutable.Set,
 	};
 	return new Immutable.Map(initialState);
