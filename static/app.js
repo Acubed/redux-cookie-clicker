@@ -226,6 +226,8 @@ function arccReducer(state, action) {
 
 exports.CookieClickerMain = CookieClickerMain;
 function CookieClickerMain(props) {
+	var cookiesNow = CookiesNow(state, action.ts);
+	var cookiesEarnedNow = cookiesNow - state.get('cookies') + state.get('cookiesEarned');
 	var state = props.state;
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, {name:state.get('bakeryName')}),
@@ -246,7 +248,7 @@ function CookieClickerMain(props) {
 		})),
 		React.createElement('h2', {}, 'Buildings'),
 		React.createElement('ul', {}, buildingTypeList.map(function(v){
-			if(state.get('cookiesEarned')+15<v.baseCost) return null;
+			if(cookiesEarnedNow+15<v.baseCost) return null;
 			return React.createElement('li', {}, React.createElement(StorePurchaseButton, {
 				label: v.label,
 				price: buildingCost(props.state, v.name),
