@@ -1,5 +1,6 @@
 
 var express = require('express');
+var bodyParser = require('body-parser');
 var path = require('path');
 var nunjucks = require('nunjucks');
 var React = require('react');
@@ -27,6 +28,7 @@ var env = nunjucks.configure({
 
 // Now set up the express publich path
 app.use(express.static(publicPath));
+app.use(bodyParser.text({type: 'application/json'}));
 
 
 function renderCookieClickerMain(state) {
@@ -59,9 +61,17 @@ app.get('/:game?', function(req, res) {
 });
 
 app.put('/:game', function(req, res) {
-	res.statusCode = 500;
-	res.setHeader('Content-Type', 'text/plain');
-	res.end('Not implemented yet, sorry');
+	try {
+		games[req.params.game] = CC.restoreState(req.body);
+	}catch(e){
+		res.statusCode = 400;
+		res.setHeader('Content-Type', 'text/plain');
+		res.end("Error parsing upload:\n"+e.toString()+"\n");
+	}
+	// Parse game state was successful
+	res.statusCode = 204;
+	res.end();
+	console.log(games);
 });
 
 app.listen(port, function() {

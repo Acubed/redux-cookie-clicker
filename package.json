@@ -13,6 +13,7 @@
   "author": "Austin Wright",
   "license": "Public Domain",
   "dependencies": {
+    "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "immutable": "^3.8.1",
     "nunjucks": "^2.4.2",
