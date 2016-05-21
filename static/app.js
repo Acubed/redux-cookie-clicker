@@ -259,6 +259,126 @@ function CpSBuilding(state, name){
 			if(state.get('upgradesPurchased').has('Antigrandmas grandmas')) rate*=2;
 			if(state.get('upgradesPurchased').has('Rainbow grandmas')) rate*=2;
 			break;
+		case 'farm':
+			if(state.get('upgradesPurchased').has('Cheap hoes')) rate*=2;
+			if(state.get('upgradesPurchased').has('Fertilizer')) rate*=2;
+			if(state.get('upgradesPurchased').has('Cookie trees')) rate*=2;
+			if(state.get('upgradesPurchased').has('Genetically-modified cookies')) rate*=2;
+			if(state.get('upgradesPurchased').has('Gingerbread scarecrows')) rate*=2;
+			if(state.get('upgradesPurchased').has('Pulsar sprinklers')) rate*=2;
+			if(state.get('upgradesPurchased').has('Fudge fungus')) rate*=2;
+			if(state.get('upgradesPurchased').has('Wheat triffids')) rate*=2;
+			break;
+		case 'mine':
+			if(state.get('upgradesPurchased').has('Sugar gas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Megadrill')) rate*=2;
+			if(state.get('upgradesPurchased').has('Ultradrill')) rate*=2;
+			if(state.get('upgradesPurchased').has('Ultimadrill')) rate*=2;
+			if(state.get('upgradesPurchased').has('H-bomb mining')) rate*=2;
+			if(state.get('upgradesPurchased').has('Coreforge')) rate*=2;
+			if(state.get('upgradesPurchased').has('Planetsplitters')) rate*=2;
+			if(state.get('upgradesPurchased').has('Canola oil wells')) rate*=2;
+			break;
+		case 'factory':
+			if(state.get('upgradesPurchased').has('Sturdier conveyor belts')) rate*=2;
+			if(state.get('upgradesPurchased').has('Child labor')) rate*=2;
+			if(state.get('upgradesPurchased').has('Sweatshop')) rate*=2;
+			if(state.get('upgradesPurchased').has('Radium reactors')) rate*=2;
+			if(state.get('upgradesPurchased').has('Recombobulators')) rate*=2;
+			if(state.get('upgradesPurchased').has('Deep-bake process')) rate*=2;
+			if(state.get('upgradesPurchased').has('Cyborg workforce')) rate*=2;
+			if(state.get('upgradesPurchased').has('78-hour days')) rate*=2;
+			break;
+		case 'bank':
+			if(state.get('upgradesPurchased').has('Taller tellers')) rate*=2;
+			if(state.get('upgradesPurchased').has('Scissor-resistant credit cards')) rate*=2;
+			if(state.get('upgradesPurchased').has('Acid-proof vaults')) rate*=2;
+			if(state.get('upgradesPurchased').has('Chocolate coins')) rate*=2;
+			if(state.get('upgradesPurchased').has('Exponential interest rates')) rate*=2;
+			if(state.get('upgradesPurchased').has('Financial zen')) rate*=2;
+			if(state.get('upgradesPurchased').has('Way of the wallet')) rate*=2;
+			if(state.get('upgradesPurchased').has('The stuff rationale')) rate*=2;
+			break;
+		case 'temple':
+			if(state.get('upgradesPurchased').has('Golden idols')) rate*=2;
+			if(state.get('upgradesPurchased').has('Sacrifices')) rate*=2;
+			if(state.get('upgradesPurchased').has('Delicious blessing')) rate*=2;
+			if(state.get('upgradesPurchased').has('Sun festival')) rate*=2;
+			if(state.get('upgradesPurchased').has('Enlarged pantheon')) rate*=2;
+			if(state.get('upgradesPurchased').has('Great Baker in the sky')) rate*=2;
+			if(state.get('upgradesPurchased').has('Creation myth')) rate*=2;
+			if(state.get('upgradesPurchased').has('Theocracy')) rate*=2;
+			break;
+		case 'wizardtower':
+			if(state.get('upgradesPurchased').has('Pointier hats')) rate*=2;
+			if(state.get('upgradesPurchased').has('Beardlier beards')) rate*=2;
+			if(state.get('upgradesPurchased').has('Ancient grimoires')) rate*=2;
+			if(state.get('upgradesPurchased').has('Kitchen curses')) rate*=2;
+			if(state.get('upgradesPurchased').has('School of sorcery')) rate*=2;
+			if(state.get('upgradesPurchased').has('Dark formulas')) rate*=2;
+			if(state.get('upgradesPurchased').has('Cookiemancy')) rate*=2;
+			if(state.get('upgradesPurchased').has('Rabbit trick')) rate*=2;
+			break;
+		case 'shipment':
+			if(state.get('upgradesPurchased').has('Vanilla nebulae')) rate*=2;
+			if(state.get('upgradesPurchased').has('Wormholes')) rate*=2;
+			if(state.get('upgradesPurchased').has('Frequent flyer')) rate*=2;
+			if(state.get('upgradesPurchased').has('Warp drive')) rate*=2;
+			if(state.get('upgradesPurchased').has('Chocolate monoliths')) rate*=2;
+			if(state.get('upgradesPurchased').has('Generation ship')) rate*=2;
+			if(state.get('upgradesPurchased').has('Dyson sphere')) rate*=2;
+			if(state.get('upgradesPurchased').has('The final frontier')) rate*=2;
+			break;
+		case 'alchemylab':
+			if(state.get('upgradesPurchased').has('Antimony')) rate*=2;
+			if(state.get('upgradesPurchased').has('Essence of dough')) rate*=2;
+			if(state.get('upgradesPurchased').has('True chocolate')) rate*=2;
+			if(state.get('upgradesPurchased').has('Ambrosia')) rate*=2;
+			if(state.get('upgradesPurchased').has('Aqua crustulae')) rate*=2;
+			if(state.get('upgradesPurchased').has('Origin crucible')) rate*=2;
+			if(state.get('upgradesPurchased').has('Theory of atomic fluidity')) rate*=2;
+			if(state.get('upgradesPurchased').has('Beige goo')) rate*=2;
+			break;
+		case 'portal':
+			if(state.get('upgradesPurchased').has('Ancient tablet')) rate*=2;
+			if(state.get('upgradesPurchased').has('Insane oatling workers')) rate*=2;
+			if(state.get('upgradesPurchased').has('Soul bond')) rate*=2;
+			if(state.get('upgradesPurchased').has('Sanity dance')) rate*=2;
+			if(state.get('upgradesPurchased').has('Brane transplant')) rate*=2;
+			if(state.get('upgradesPurchased').has('Deity-sized portals')) rate*=2;
+			if(state.get('upgradesPurchased').has('End of times back-up plan')) rate*=2;
+			if(state.get('upgradesPurchased').has('Maddening chants')) rate*=2;
+			break;
+		case 'timemachine':
+			if(state.get('upgradesPurchased').has('Flux capacitors')) rate*=2;
+			if(state.get('upgradesPurchased').has('Time paradox resolver')) rate*=2;
+			if(state.get('upgradesPurchased').has('Quantum conundrum')) rate*=2;
+			if(state.get('upgradesPurchased').has('Causality enforcer')) rate*=2;
+			if(state.get('upgradesPurchased').has('Yestermorrow comparators')) rate*=2;
+			if(state.get('upgradesPurchased').has('Far future enactment')) rate*=2;
+			if(state.get('upgradesPurchased').has('Great loop hypothesis')) rate*=2;
+			if(state.get('upgradesPurchased').has('Cookietopian moments of maybe')) rate*=2;
+			break;
+		case 'antimattercondenser':
+			if(state.get('upgradesPurchased').has('Sugar bosons')) rate*=2;
+			if(state.get('upgradesPurchased').has('String theory')) rate*=2;
+			if(state.get('upgradesPurchased').has('Large macaron collider')) rate*=2;
+			if(state.get('upgradesPurchased').has('Big bang bake')) rate*=2;
+			if(state.get('upgradesPurchased').has('Reverse cyclotrons')) rate*=2;
+			if(state.get('upgradesPurchased').has('Nanocosmics')) rate*=2;
+			if(state.get('upgradesPurchased').has('The Pulse')) rate*=2;
+			if(state.get('upgradesPurchased').has('Some other super-tiny fundamental particle? Probably?')) rate*=2;
+			break;
+		case 'prism':
+			if(state.get('upgradesPurchased').has('Gem polish')) rate*=2;
+			if(state.get('upgradesPurchased').has('9th color')) rate*=2;
+			if(state.get('upgradesPurchased').has('Chocolate light')) rate*=2;
+			if(state.get('upgradesPurchased').has('Grainbow')) rate*=2;
+			if(state.get('upgradesPurchased').has('Pure cosmic light')) rate*=2;
+			if(state.get('upgradesPurchased').has('Glow-in-the-dark')) rate*=2;
+			if(state.get('upgradesPurchased').has('Lux sanctorum')) rate*=2;
+			if(state.get('upgradesPurchased').has('Reverse shadows')) rate*=2;
+			break;
 	}
 	return rate;
 }
