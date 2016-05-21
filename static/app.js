@@ -45,6 +45,9 @@ function tierUpgrade(building, level, label){
 	// [building minimum, base cost factor]
 	return {label:label, unlocked:upgraderBuildingMinimum(building, levels[level][0]), cost:buildingTypes[building].baseCost*levels[level][1], descriptionHtml:''};
 }
+function cookieUpgrade(label, power, cost){
+	return {label:label, unlockedEarned:cost/20, cost:cost, description:'Cookie production multiplier <b>+'+power+'%</b>'};
+}
 tierUpgrade.levels = [
 	[0,0], // shrug
 	[1, 10],
@@ -201,6 +204,23 @@ var upgradeList = [
 	tierUpgrade('prism', 6, 'Glow-in-the-dark'),
 	tierUpgrade('prism', 7, 'Lux sanctorum'),
 	tierUpgrade('prism', 8, 'Reverse shadows'),
+	// Cookie upgrades
+	cookieUpgrade('Plain Cookie', 1, 999999),
+	cookieUpgrade('Sugar cookies', 1, 5e6),
+	cookieUpgrade('Oatmeal raisin cookies', 1, 10e6),
+	cookieUpgrade('Peanut butter cookies', 1, 50e6),
+	cookieUpgrade('White chocolate cookies', 2, 500e6),
+	cookieUpgrade('Macadamia nut cookies', 2, 1e9),
+	cookieUpgrade('Double-chip cookies', 2, 5e9),
+	cookieUpgrade('White chocolate macadamia nut cookies', 2, 10e9),
+	cookieUpgrade('All-chocolate cookies', 2, 50e9),
+	cookieUpgrade('Dark chocolate-coated cookies', 4, 100e9),
+	cookieUpgrade('White chocolate-coated cookies', 4, 100e9),
+	cookieUpgrade('Eclipse cookies', 2, 500e9),
+	cookieUpgrade('Zebra cookies', 2, 1e12),
+	cookieUpgrade('Snickerdoodles', 2, 5e12),
+	cookieUpgrade('Stroopwafels', 2, 10e12),
+	cookieUpgrade('Macaroons', 2, 50e12),
 ];
 var upgradeTypes = {};
 upgradeList.forEach(function(v){ upgradeTypes[v.label] = v; });
@@ -237,7 +257,7 @@ function CpSBuilding(state, name){
 			if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
 			if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
 			if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
-			var objects = buildingTypeList.reduce(function(item, sum){ return (item.name=='cursor') ? sum : sum + state.get('buildingCount').get(item.name, 0); }, 0);
+			var objects = buildingTypeList.reduce(function(sum, v){ return sum + (v.name=='cursor') ? 0 : state.get('buildingCount').get(v.name, 0); }, 0);
 			if(state.get('upgradesPurchased').has('Thousand fingers')) rate += objects*0.1;
 			if(state.get('upgradesPurchased').has('Million fingers')) rate += objects*0.5;
 			if(state.get('upgradesPurchased').has('Billion fingers')) rate += objects*5;
@@ -401,7 +421,7 @@ function bigCookieClickCookies(state){
 	if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
 	if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
 	if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
-	var objects = buildingTypeList.reduce(function(item, sum){ return (item.name=='cursor') ? sum : sum + state.get('buildingCount').get(item.name, 0); }, 0);
+	var objects = buildingTypeList.reduce(function(sum, v){ return sum + (v.name=='cursor') ? 0 : state.get('buildingCount').get(v.name, 0); }, 0);
 	if(state.get('upgradesPurchased').has('Thousand fingers')) rate += objects*0.1;
 	if(state.get('upgradesPurchased').has('Million fingers')) rate += objects*0.5;
 	if(state.get('upgradesPurchased').has('Billion fingers')) rate += objects*5;
@@ -513,7 +533,8 @@ function CookieClickerMain(props) {
 		React.createElement('h2', {}, 'Upgrades'),
 		React.createElement('ul', {}, upgradeList.map(function(v){
 			if(state.get('upgradesPurchased').has(v.label)) return null;
-			if(!upgradeTypes[v.label].unlocked(props.state)) return null;
+			if(upgradeTypes[v.label].unlocked && !upgradeTypes[v.label].unlocked(props.state)) return null;
+			if(upgradeTypes[v.label].unlockedEarned && cookiesEarnedNow<upgradeTypes[v.label].unlockedEarned) return null;
 			return React.createElement('li', {}, React.createElement(UpgradePurchaseButton, {
 				label: v.label,
 				price: v.cost,
