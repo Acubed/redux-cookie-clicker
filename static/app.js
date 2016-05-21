@@ -1,4 +1,4 @@
-
+// Section 0. Cross-platform setup
 if(typeof exports=='object'){
 	var Immutable = require('immutable');
 	var React = require('react');
@@ -8,6 +8,7 @@ if(typeof exports=='object'){
 }else{
 	//throw new Error('Unknown platform');
 }
+
 // Section 1. Static game data
 var buildingTypeList = [
 	{label:'Cursor', name:'cursor', baseCost:15, baseClicks:0.1},
@@ -459,7 +460,7 @@ function arccReducer(state, action) {
 			return action.state.set('ts', action.ts);
 		case 'bigCookieClick':
 			var cookiesNow = CookiesNow(state, action.ts);
-			var cookiesEarned = bigCookieClickCookies(state);
+			var cookiesEarned = bigCookieClickCookies(state) * (action.factor||1);
 			return state.merge({
 				ts: action.ts,
 				cookies: cookiesNow + cookiesEarned,
