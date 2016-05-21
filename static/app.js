@@ -230,12 +230,22 @@ function CpSTotal(state){
 function CpSBuilding(state, name){
 	var building = buildingTypes[name];
 	var buildingCount = state.get('buildingCount').get(name);
-	var rate = building.baseClicks * buildingCount;
+	var rate = building.baseClicks;
 	switch(name){
 		case 'cursor':
 			if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
 			if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
 			if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
+			var objects = buildingTypeList.reduce(function(item, sum){ return (item.name=='cursor') ? sum : sum + state.get('buildingCount').get(item.name, 0); }, 0);
+			if(state.get('upgradesPurchased').has('Thousand fingers')) rate += objects*0.1;
+			if(state.get('upgradesPurchased').has('Million fingers')) rate += objects*0.5;
+			if(state.get('upgradesPurchased').has('Billion fingers')) rate += objects*5;
+			if(state.get('upgradesPurchased').has('Trillion fingers')) rate += objects*50;
+			if(state.get('upgradesPurchased').has('Quadrillion fingers')) rate += objects*500;
+			if(state.get('upgradesPurchased').has('Quintillion fingers')) rate += objects*5000;
+			if(state.get('upgradesPurchased').has('Sextillion fingers')) rate += objects*50000;
+			if(state.get('upgradesPurchased').has('Septillion fingers')) rate += objects*500000;
+			if(state.get('upgradesPurchased').has('Octillion fingers')) rate += objects*5000000;
 			break;
 		case 'grandma':
 			if(state.get('upgradesPurchased').has('Forwards from grandma')) rate*=2;
@@ -380,15 +390,26 @@ function CpSBuilding(state, name){
 			if(state.get('upgradesPurchased').has('Reverse shadows')) rate*=2;
 			break;
 	}
-	return rate;
+	return rate * buildingCount;
 }
 
 function bigCookieClickCookies(state){
+	// This is pretty much just 10 seconds of "cursor" cookie production
 	var rate = 1;
 	// These upgrades also affect big cookie clicks (it's supposed to be the same thing)
 	if(state.get('upgradesPurchased').has('Reinforced index finger')) rate *= 2;
 	if(state.get('upgradesPurchased').has('Carpal tunnel prevention cream')) rate *= 2;
 	if(state.get('upgradesPurchased').has('Ambidextrous')) rate *= 2;
+	var objects = buildingTypeList.reduce(function(item, sum){ return (item.name=='cursor') ? sum : sum + state.get('buildingCount').get(item.name, 0); }, 0);
+	if(state.get('upgradesPurchased').has('Thousand fingers')) rate += objects*0.1;
+	if(state.get('upgradesPurchased').has('Million fingers')) rate += objects*0.5;
+	if(state.get('upgradesPurchased').has('Billion fingers')) rate += objects*5;
+	if(state.get('upgradesPurchased').has('Trillion fingers')) rate += objects*50;
+	if(state.get('upgradesPurchased').has('Quadrillion fingers')) rate += objects*500;
+	if(state.get('upgradesPurchased').has('Quintillion fingers')) rate += objects*5000;
+	if(state.get('upgradesPurchased').has('Sextillion fingers')) rate += objects*50000;
+	if(state.get('upgradesPurchased').has('Septillion fingers')) rate += objects*500000;
+	if(state.get('upgradesPurchased').has('Octillion fingers')) rate += objects*5000000;
 	return rate;
 }
 
