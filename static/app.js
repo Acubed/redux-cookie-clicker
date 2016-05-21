@@ -38,23 +38,47 @@ function upgraderBuildingMinimumGrandma(buildingType, buildingCount){
 		return (state.get('buildingCount').get(buildingType) >= 15) && (state.get('buildingCount').get('grandma') >= 1);
 	}
 }
+
+function tierUpgrade(building, level, label){
+	var levels = tierUpgrade.levels;
+	// [building minimum, base cost factor]
+	return {label:label, unlocked:upgraderBuildingMinimum(building, levels[level][0]), cost:buildingTypes[building].baseCost*levels[level][1], descriptionHtml:''};
+}
+tierUpgrade.levels = [
+	[0,0], // shrug
+	[1, 10],
+	[5, 50],
+	[25, 500],
+	[50, 50000],
+	[100, 5000000],
+	[150, 500000000],
+	[200, 500000000000],
+	[250, 500000000000000],
+];
+
 var upgradeList = [
 	// Cursor upgrades
 	{label:'Reinforced index finger', unlocked:upgraderBuildingMinimum('cursor', 1), cost:100, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
 	{label:'Carpal tunnel prevention cream', unlocked:upgraderBuildingMinimum('cursor', 1), cost:500, descriptionHtml:'The mouse and cursors are twice as efficient. "it... it hurts to click..."'},
 	{label:'Ambidextrous', unlocked:upgraderBuildingMinimum('cursor', 10), cost:10000, descriptionHtml:'The mouse and cursors are twice as efficient. "prod prod"'},
 	{label:'Thousand fingers', unlocked:upgraderBuildingMinimum('cursor', 20), cost:100000, descriptionHtml:'The mouse and cursors gain +0.1 cookies for each non-cursor object owned.'},
-	{label:'Million fingers', unlocked:upgraderBuildingMinimum('cursor', 40), cost:10e6, descriptionHtml:'The mouse and cursors gain +0.5 cookies for each non-cursor object owned.'},
-	{label:'Billion fingers', unlocked:upgraderBuildingMinimum('cursor', 80), cost:100e6, descriptionHtml:'The mouse and cursors gain +5 cookies for each non-cursor object owned.'},
+	{label:'Million fingers', unlocked:upgraderBuildingMinimum('cursor', 40), cost:10e6, descriptionHtml:''},
+	{label:'Billion fingers', unlocked:upgraderBuildingMinimum('cursor', 80), cost:100e6, descriptionHtml:''},
+	{label:'Trillion fingers', unlocked:upgraderBuildingMinimum('cursor', 120), cost:1e9, descriptionHtml:''},
+	{label:'Quadrillion fingers', unlocked:upgraderBuildingMinimum('cursor', 160), cost:10e12, descriptionHtml:''},
+	{label:'Quintillion fingers', unlocked:upgraderBuildingMinimum('cursor', 200), cost:100e6, descriptionHtml:''},
+	{label:'Sextillion fingers', unlocked:upgraderBuildingMinimum('cursor', 240), cost:100e6, descriptionHtml:''},
+	{label:'Septillion fingers', unlocked:upgraderBuildingMinimum('cursor', 280), cost:100e6, descriptionHtml:''},
+	{label:'Octillion fingers', unlocked:upgraderBuildingMinimum('cursor', 320), cost:100e6, descriptionHtml:''},
 	// Grandma upgrades
-	{label:'Forwards from grandma', unlocked:upgraderBuildingMinimum('grandma', 1), cost:1000, descriptionHtml:'Grandmas are twice as efficient.'},
-	{label:'Steel-plated rolling pins', unlocked:upgraderBuildingMinimum('grandma', 5), cost:5000, descriptionHtml:'Grandmas are twice as efficient.'},
-	{label:'Lubricated dentures', unlocked:upgraderBuildingMinimum('grandma', 25), cost:50000, descriptionHtml:'Grandmas are twice as efficient.'},
-	{label:'Prune juice', unlocked:upgraderBuildingMinimum('grandma', 50), cost:5e6, descriptionHtml:'Description'},
-	{label:'Double-thick glasses', unlocked:upgraderBuildingMinimum('grandma', 100), cost:500e6, descriptionHtml:'Description'},
-	{label:'Aging agents', unlocked:upgraderBuildingMinimum('grandma', 150), cost:50e9, descriptionHtml:'Description'},
-	{label:'Xtreme walkers', unlocked:upgraderBuildingMinimum('grandma', 200), cost:50e12, descriptionHtml:'Description'},
-	{label:'The Unbridling', unlocked:upgraderBuildingMinimum('grandma', 250), cost:50e15, descriptionHtml:'Description'},
+	tierUpgrade('grandma', 1, 'Forwards from grandma'),
+	tierUpgrade('grandma', 2, 'Steel-plated rolling pins'),
+	tierUpgrade('grandma', 3, 'Lubricated dentures'),
+	tierUpgrade('grandma', 4, 'Prune juice'),
+	tierUpgrade('grandma', 5, 'Double-thick glasses'),
+	tierUpgrade('grandma', 6, 'Aging agents'),
+	tierUpgrade('grandma', 7, 'Xtreme walkers'),
+	tierUpgrade('grandma', 8, 'The Unbridling'),
 	// The Grandma-x-Grandma upgrades
 	{label:'Farmer grandmas', unlocked:upgraderBuildingMinimumGrandma('farm'), cost:55000, descriptionHtml:'Grandmas are twice as efficient. Farms gain +1% CpS per grandma.'},
 	{label:'Miner grandmas', unlocked:upgraderBuildingMinimumGrandma('mine'), cost:600000, descriptionHtml:'Grandmas are twice as efficient. Mines gain +1% CpS per 2 grandmas.'},
@@ -69,7 +93,113 @@ var upgradeList = [
 	{label:'Antigrandmas grandmas', unlocked:upgraderBuildingMinimumGrandma('antimattercondenser'), cost:8.5e15, descriptionHtml:'Grandmas are twice as efficient. Antimatter condensers gain +1% CpS per 11 grandmas.'},
 	{label:'Rainbow grandmas', unlocked:upgraderBuildingMinimumGrandma('prism'), cost:105e15, descriptionHtml:'Grandmas are twice as efficient. Prisms gain +1% CpS per 12 grandmas.'},
 	// Farm upgrades
-	//{label:'Name', unlocked:upgraderBuildingMinimumGrandma('grandma'), cost:100, descriptionHtml:'Description'},
+	tierUpgrade('farm', 1, 'Cheap hoes'),
+	tierUpgrade('farm', 2, 'Fertilizer'),
+	tierUpgrade('farm', 3, 'Cookie trees'),
+	tierUpgrade('farm', 4, 'Genetically-modified cookies'),
+	tierUpgrade('farm', 5, 'Gingerbread scarecrows'),
+	tierUpgrade('farm', 6, 'Pulsar sprinklers'),
+	tierUpgrade('farm', 7, 'Fudge fungus'),
+	tierUpgrade('farm', 8, 'Wheat triffids'),
+	// Mine upgrades
+	tierUpgrade('mine', 1, 'Sugar gas'),
+	tierUpgrade('mine', 2, 'Megadrill'),
+	tierUpgrade('mine', 3, 'Ultradrill'),
+	tierUpgrade('mine', 4, 'Ultimadrill'),
+	tierUpgrade('mine', 5, 'H-bomb mining'),
+	tierUpgrade('mine', 6, 'Coreforge'),
+	tierUpgrade('mine', 7, 'Planetsplitters'),
+	tierUpgrade('mine', 8, 'Canola oil wells'),
+	// Factory upgrades
+	tierUpgrade('factory', 1, 'Sturdier conveyor belts'),
+	tierUpgrade('factory', 2, 'Child labor'),
+	tierUpgrade('factory', 3, 'Sweatshop'),
+	tierUpgrade('factory', 4, 'Radium reactors'),
+	tierUpgrade('factory', 5, 'Recombobulators'),
+	tierUpgrade('factory', 6, 'Deep-bake process'),
+	tierUpgrade('factory', 7, 'Cyborg workforce'),
+	tierUpgrade('factory', 8, '78-hour days'),
+	// Bank upgrades
+	tierUpgrade('bank', 1, 'Taller tellers'),
+	tierUpgrade('bank', 2, 'Scissor-resistant credit cards'),
+	tierUpgrade('bank', 3, 'Acid-proof vaults'),
+	tierUpgrade('bank', 4, 'Chocolate coins'),
+	tierUpgrade('bank', 5, 'Exponential interest rates'),
+	tierUpgrade('bank', 6, 'Financial zen'),
+	tierUpgrade('bank', 7, 'Way of the wallet'),
+	tierUpgrade('bank', 8, 'The stuff rationale'),
+	// Temple upgrades
+	tierUpgrade('temple', 1, 'Golden idols'),
+	tierUpgrade('temple', 2, 'Sacrifices'),
+	tierUpgrade('temple', 3, 'Delicious blessing'),
+	tierUpgrade('temple', 4, 'Sun festival'),
+	tierUpgrade('temple', 5, 'Enlarged pantheon'),
+	tierUpgrade('temple', 6, 'Great Baker in the sky'),
+	tierUpgrade('temple', 7, 'Creation myth'),
+	tierUpgrade('temple', 8, 'Theocracy'),
+	// Wizard tower upgrades
+	tierUpgrade('wizardtower', 1, 'Pointier hats'),
+	tierUpgrade('wizardtower', 2, 'Beardlier beards'),
+	tierUpgrade('wizardtower', 3, 'Ancient grimoires'),
+	tierUpgrade('wizardtower', 4, 'Kitchen curses'),
+	tierUpgrade('wizardtower', 5, 'School of sorcery'),
+	tierUpgrade('wizardtower', 6, 'Dark formulas'),
+	tierUpgrade('wizardtower', 7, 'Cookiemancy'),
+	tierUpgrade('wizardtower', 8, 'Rabbit trick'),
+	// Shipment upgrades
+	tierUpgrade('shipment', 1, 'Vanilla nebulae'),
+	tierUpgrade('shipment', 2, 'Wormholes'),
+	tierUpgrade('shipment', 3, 'Frequent flyer'),
+	tierUpgrade('shipment', 4, 'Warp drive'),
+	tierUpgrade('shipment', 5, 'Chocolate monoliths'),
+	tierUpgrade('shipment', 6, 'Generation ship'),
+	tierUpgrade('shipment', 7, 'Dyson sphere'),
+	tierUpgrade('shipment', 8, 'The final frontier'),
+	// Alchemy Lab upgrades
+	tierUpgrade('alchemylab', 1, 'Antimony'),
+	tierUpgrade('alchemylab', 2, 'Essence of dough'),
+	tierUpgrade('alchemylab', 3, 'True chocolate'),
+	tierUpgrade('alchemylab', 4, 'Ambrosia'),
+	tierUpgrade('alchemylab', 5, 'Aqua crustulae'),
+	tierUpgrade('alchemylab', 6, 'Origin crucible'),
+	tierUpgrade('alchemylab', 7, 'Theory of atomic fluidity'),
+	tierUpgrade('alchemylab', 8, 'Beige goo'),
+	// Portal upgrades
+	tierUpgrade('portal', 1, 'Ancient tablet'),
+	tierUpgrade('portal', 2, 'Insane oatling workers'),
+	tierUpgrade('portal', 3, 'Soul bond'),
+	tierUpgrade('portal', 4, 'Sanity dance'),
+	tierUpgrade('portal', 5, 'Brane transplant'),
+	tierUpgrade('portal', 6, 'Deity-sized portals'),
+	tierUpgrade('portal', 7, 'End of times back-up plan'),
+	tierUpgrade('portal', 8, 'Maddening chants'),
+	// Time Machine upgrades
+	tierUpgrade('timemachine', 1, 'Flux capacitors'),
+	tierUpgrade('timemachine', 2, 'Time paradox resolver'),
+	tierUpgrade('timemachine', 3, 'Quantum conundrum'),
+	tierUpgrade('timemachine', 4, 'Causality enforcer'),
+	tierUpgrade('timemachine', 5, 'Yestermorrow comparators'),
+	tierUpgrade('timemachine', 6, 'Far future enactment'),
+	tierUpgrade('timemachine', 7, 'Great loop hypothesis'),
+	tierUpgrade('timemachine', 8, 'Cookietopian moments of maybe'),
+	// Antimatter Condenser upgrades
+	tierUpgrade('antimattercondenser', 1, 'Sugar bosons'),
+	tierUpgrade('antimattercondenser', 2, 'String theory'),
+	tierUpgrade('antimattercondenser', 3, 'Large macaron collider'),
+	tierUpgrade('antimattercondenser', 4, 'Big bang bake'),
+	tierUpgrade('antimattercondenser', 5, 'Reverse cyclotrons'),
+	tierUpgrade('antimattercondenser', 6, 'Nanocosmics'),
+	tierUpgrade('antimattercondenser', 7, 'The Pulse'),
+	tierUpgrade('antimattercondenser', 8, 'Some other super-tiny fundamental particle? Probably?'),
+	// Prism upgrades
+	tierUpgrade('prism', 1, 'Gem polish'),
+	tierUpgrade('prism', 2, '9th color'),
+	tierUpgrade('prism', 3, 'Chocolate light'),
+	tierUpgrade('prism', 4, 'Grainbow'),
+	tierUpgrade('prism', 5, 'Pure cosmic light'),
+	tierUpgrade('prism', 6, 'Glow-in-the-dark'),
+	tierUpgrade('prism', 7, 'Lux sanctorum'),
+	tierUpgrade('prism', 8, 'Reverse shadows'),
 ];
 var upgradeTypes = {};
 upgradeList.forEach(function(v){ upgradeTypes[v.label] = v; });
@@ -199,6 +329,7 @@ function arccReducer(state, action) {
 			var cookiesNow = CookiesNow(state, action.ts);
 			var hasUpgrade = state.get('upgradesPurchased').has(action.upgradeName);
 			var cost = upgradeTypes[action.upgradeName].cost;
+			// TODO: Upgrades can be made cheaper with a number of other upgrades
 			if(cookiesNow<cost) throw new Error('Insufficent funds!');
 			return state.merge({
 				ts: action.ts,
@@ -226,9 +357,9 @@ function arccReducer(state, action) {
 
 exports.CookieClickerMain = CookieClickerMain;
 function CookieClickerMain(props) {
-	var cookiesNow = CookiesNow(state, action.ts);
-	var cookiesEarnedNow = cookiesNow - state.get('cookies') + state.get('cookiesEarned');
 	var state = props.state;
+	var cookiesNow = CookiesNow(state, ts());
+	var cookiesEarnedNow = cookiesNow - state.get('cookies') + state.get('cookiesEarned');
 	return React.createElement("div", {}, [
 		React.createElement(HelloMessage, {name:state.get('bakeryName')}),
 		React.createElement('h1', {}, 'Big Cookie'),
