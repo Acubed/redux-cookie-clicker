@@ -46,7 +46,7 @@ function tierUpgrade(building, level, label){
 	return {label:label, unlocked:upgraderBuildingMinimum(building, levels[level][0]), cost:buildingTypes[building].baseCost*levels[level][1], descriptionHtml:''};
 }
 function cookieUpgrade(label, power, cost){
-	return {label:label, unlockedEarned:cost/20, cost:cost, description:'Cookie production multiplier <b>+'+power+'%</b>'};
+	return {label:label, unlockedEarned:cost/20, cost:cost, description:'Cookie production multiplier <b>+'+power+'%</b>', globalProductionMultiplier:1+power/100};
 }
 tierUpgrade.levels = [
 	[0,0], // shrug
@@ -245,7 +245,12 @@ function CpSTotal(state){
 	var buildingsTotal = buildingTypeList.reduce(function(sum, v){
 			return sum + CpSBuilding(state, v.name);
 	}, 0);
-	return buildingsTotal * state.get('debugMultiplier', 1);
+	var globalProductionMultiplier = upgradeList.reduce(function(factor, v){
+		// Iterate through the cookie, see if it has a multiplier
+		if(state.get('upgradesPurchased').has(v.label)) return factor * (v.globalProductionMultiplier||1);
+		else return factor;
+	}, 1);
+	return buildingsTotal * globalProductionMultiplier * state.get('debugMultiplier', 1);
 }
 
 function CpSBuilding(state, name){
